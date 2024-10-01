@@ -5,8 +5,8 @@ from .models import Order, OrderItem
 
 class OrderItemTabularAdmin(admin.TabularInline):
     model = OrderItem
-    fields = ('product', 'name', 'price', 'quantity',)
-    search_fields = ('product', 'name',)
+    fields = ('product', 'price', 'quantity',)
+    search_fields = ('product',)
     extra = 0
 
 

@@ -94,7 +94,7 @@ class UserProfileView(LoginRequiredMixin, CacheMixin, UpdateView):
                      queryset=OrderItem.objects.select_related('product'),
                      )
         ).order_by('-id')
-        context['orders'] = self.set_get_cache(orders, f'user {self.request.user} orders', 60*2)
+        context['orders'] = self.set_get_cache(orders, f'user {self.request.user} orders', 3)
         return context
 
 

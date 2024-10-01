@@ -26,7 +26,11 @@ SECRET_KEY = 'django-insecure-a@cz7l3fu-r6ttpf%g(9$x%mxy$wuhn#6!q8wb55+^^la7y1+u
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = [
+    'localhost',
+    '127.0.0.1',
+    '78a0-31-162-135-209.ngrok-free.app',  # ваш ngrok URL
+]
 
 
 # Application definition
@@ -42,6 +46,7 @@ INSTALLED_APPS = [
 
     'debug_toolbar',
     'phonenumber_field',
+    'yookassa',
 
 
     'main',
@@ -161,3 +166,8 @@ LOGIN_REDIRECT_URL = '/'
 INTERNAL_IPS = [
     "127.0.0.1",
 ]
+
+# yookassa
+
+YOOKASSA_SHOP_ID = '467782'
+YOOKASSA_API_KEY = 'test_yvNUyrflc6Xmfz4mK6dBaRDdsAMP9_5FwBWXp3t5xYY'
