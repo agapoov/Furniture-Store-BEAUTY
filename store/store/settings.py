@@ -12,6 +12,7 @@ https://docs.djangoproject.com/en/3.2/ref/settings/
 
 import os
 from pathlib import Path
+from decouple import config
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -169,21 +170,20 @@ INTERNAL_IPS = [
 
 # yookassa
 
-YOOKASSA_SHOP_ID = '467782'
-YOOKASSA_API_KEY = 'test_yvNUyrflc6Xmfz4mK6dBaRDdsAMP9_5FwBWXp3t5xYY'
-
+YOOKASSA_SHOP_ID = config('YOOKASSA_SHOP_ID')
+YOOKASSA_API_KEY = config('YOOKASSA_API_KEY')
 # email confirmation
 
 CELERY_BROKER_URL = 'redis://localhost:6379/0'
 CELERY_ACCEPT_CONTENT = ['json']
 CELERY_TASK_SERIALIZER = 'json'
 
-EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
-EMAIL_HOST = 'smtp.yandex.com'
-EMAIL_PORT = 465
-EMAIL_USE_SSL = True
-EMAIL_HOST_USER = 'Store114B@yandex.ru'
-EMAIL_HOST_PASSWORD = 'tokwmymgivtnplrx'
+EMAIL_BACKEND = config('EMAIL_BACKEND')
+EMAIL_HOST = config('EMAIL_HOST')
+EMAIL_PORT = config('EMAIL_PORT', cast=int)
+EMAIL_USE_SSL = config('EMAIL_USE_SSL', cast=bool)
+EMAIL_HOST_USER = config('EMAIL_HOST_USER')
+EMAIL_HOST_PASSWORD = config('EMAIL_HOST_PASSWORD')
 
 # LOGGING
 
