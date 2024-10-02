@@ -9,6 +9,15 @@
                 <div class="col-md-5">
                     <div class=" bg-white p-4 mb-4 mx-2 rounded custom-shadow">
                         <h3 class="text-center mb-4">Профиль пользователя</h3>
+                        <!-- Кнопка для подтверждения почты -->
+                            {% if not user.email_is_verified %}
+                                <form action="{% url 'users:send_verification_email' %}" method="post">
+                                    {% csrf_token %}
+                                    <button type="submit" class="btn btn-success mt-3">Отправить повторное подтверждение почты</button>
+                                </form>
+                            {% else %}
+                                <p class="text-success">Ваш email подтвержден!</p>
+                            {% endif %}
                         <form action="{% url 'user:profile'%}" method="post" enctype="multipart/form-data">
                             {% csrf_token %}
                             <div class="row">
@@ -124,7 +133,6 @@
                                                     <td>{{ item.quantity }}</td>
                                                     <td>{{ item.price }} ₽</td>
                                                     <td>{{ item.products_price }} ₽</td>
-
                                                 </tr>
                                                 {% endfor %}
                                             </tbody>

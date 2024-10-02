@@ -1,6 +1,5 @@
-from django import template
-
 from carts.utils import get_user_carts
+from django import template
 
 register = template.Library()
 

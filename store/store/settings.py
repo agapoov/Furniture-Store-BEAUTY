@@ -29,9 +29,9 @@ DEBUG = True
 ALLOWED_HOSTS = [
     'localhost',
     '127.0.0.1',
-    '78a0-31-162-135-209.ngrok-free.app',  # ваш ngrok URL
+    # '78a0-31-162-135-209.ngrok-free.app', ngrok
 ]
-
+DOMAIN_NAME = 'http://127.0.0.1:8000'
 
 # Application definition
 
@@ -171,3 +171,16 @@ INTERNAL_IPS = [
 
 YOOKASSA_SHOP_ID = '467782'
 YOOKASSA_API_KEY = 'test_yvNUyrflc6Xmfz4mK6dBaRDdsAMP9_5FwBWXp3t5xYY'
+
+# email confirmation
+
+CELERY_BROKER_URL = 'redis://localhost:6379/0'
+CELERY_ACCEPT_CONTENT = ['json']
+CELERY_TASK_SERIALIZER = 'json'
+
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'smtp.yandex.com'
+EMAIL_PORT = 465
+EMAIL_USE_SSL = True
+EMAIL_HOST_USER = 'Store114B@yandex.ru'
+EMAIL_HOST_PASSWORD = 'tokwmymgivtnplrx'

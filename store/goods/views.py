@@ -1,6 +1,5 @@
 from django.http import Http404
 from django.views.generic import DetailView, ListView
-
 from goods.models import Products
 from goods.utils import q_search
 

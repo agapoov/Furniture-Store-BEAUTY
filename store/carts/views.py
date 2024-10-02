@@ -1,7 +1,6 @@
+from carts.models import Cart
 from django.http import JsonResponse
 from django.views import View
-
-from carts.models import Cart
 from goods.models import Products
 
 from .mixins import CartMixin

@@ -1,16 +1,20 @@
+from carts.models import Cart
+from common.mixins import CacheMixin
 from django.contrib import auth, messages
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.views import LoginView
 from django.db.models import Prefetch
 from django.http import HttpResponseRedirect
-from django.shortcuts import redirect
+from django.shortcuts import redirect, get_object_or_404
 from django.urls import reverse, reverse_lazy
-from django.views.generic import CreateView, TemplateView, UpdateView
-from carts.models import Cart
+from django.views.generic import CreateView, TemplateView, UpdateView, View
 from orders.models import Order, OrderItem
 from users.forms import UserLoginForm, UserProfileForm, UserRegistrationForm
-from common.mixins import CacheMixin
+from django.utils.timezone import now
+from datetime import timedelta
+import uuid
+from .models import EmailVerification
 
 
 class UserLoginView(LoginView):
@@ -57,16 +61,55 @@ class UserRegistrationView(CreateView):
         if user:
             form.save()
             auth.login(self.request, user)
+
+            # Создание записи подтверждения почты
+            expiration_time = now() + timedelta(hours=24)
+            email_verification = EmailVerification.objects.create(
+                user=user,
+                code=uuid.uuid4(),
+                expiration=expiration_time
+            )
+            email_verification.send_verification_email()
+
         if session_key:
             Cart.objects.filter(session_key=session_key).update(user=user)
 
-        messages.success(self.request, f'{user.first_name} Вы успешно зарегистрировались.')
+        messages.success(self.request, f'{user.first_name}, вы успешно зарегистрировались.'
+                                       f' Пожалуйста, подтвердите свою почту.')
         return HttpResponseRedirect(self.success_url)
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['title'] = 'BEAUTY - Регистрация'
         return context
+
+
+class EmailVerificationView(View):
+    def get(self, request, email, code):
+        verification = get_object_or_404(EmailVerification, user__email=email, code=code)
+
+        if not verification.is_expired():
+            verification.verify_email()
+            messages.success(request, 'Ваш email успешно подтвержден!')
+        else:
+            messages.error(request, 'Ссылка для подтверждения почты истекла.')
+
+        return redirect('users:profile')
+
+    def post(self, request):
+        user = request.user
+        verification = EmailVerification.objects.filter(user=user).first()
+
+        if verification and not verification.is_expired():
+            messages.error(request, 'Вы можете отправить новое письмо с подтверждением только через 24 часа.')
+        else:
+            if verification:
+                verification.delete()  # удаляем старую запись, если она есть
+            verification = EmailVerification.objects.create(user=user)
+            verification.send_verification_email()
+            messages.success(request, 'Письмо с подтверждением было отправлено на ваш email.')
+
+        return redirect('users:profile')
 
 
 class UserProfileView(LoginRequiredMixin, CacheMixin, UpdateView):

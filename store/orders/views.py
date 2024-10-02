@@ -1,22 +1,22 @@
 import json
+
+from carts.models import Cart
 from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.db import transaction
 from django.forms import ValidationError
 from django.http import JsonResponse
 from django.shortcuts import redirect
-from django.urls import reverse_lazy
-from django.views import View
-from django.views.generic import FormView
-from django.urls import reverse
-from carts.models import Cart
-from django.views.decorators.csrf import csrf_exempt
+from django.urls import reverse, reverse_lazy
 from django.utils.decorators import method_decorator
+from django.views import View
+from django.views.decorators.csrf import csrf_exempt
+from django.views.generic import FormView
 from orders.forms import CreateOrderForm
 from orders.models import Order, OrderItem
 from yookassa import Configuration, Payment
-from store.settings import YOOKASSA_SHOP_ID, YOOKASSA_API_KEY
-
+from .tasks import send_order_status_email
+from store.settings import YOOKASSA_API_KEY, YOOKASSA_SHOP_ID
 
 Configuration.account_id = YOOKASSA_SHOP_ID
 Configuration.secret_key = YOOKASSA_API_KEY
@@ -128,6 +128,9 @@ class YandexPaymentWebhookView(View):
                 order.is_paid = True
                 order.status = 'paid'
                 order.save()
+                # отправка письма о статусе заказа
+                send_order_status_email(order)
+
                 return JsonResponse({'status': 'success'}, status=200)
             except Order.DoesNotExist:
                 return JsonResponse({'status': 'order not found'}, status=404)
@@ -137,6 +140,9 @@ class YandexPaymentWebhookView(View):
                 order = Order.objects.get(payment_id=payment_id)
                 order.status = 'canceled'
                 order.save()
+
+                send_order_status_email(order)
+
                 return JsonResponse({'status': 'order canceled'}, status=200)
             except Order.DoesNotExist:
                 return JsonResponse({'status': 'order not found'}, status=404)
