@@ -1,10 +1,11 @@
+import uuid
+from datetime import timedelta
+
 from django.conf import settings
 from django.contrib.auth.models import AbstractUser, send_mail
 from django.db import models
 from django.urls import reverse
-from datetime import timedelta
 from django.utils import timezone
-import uuid
 
 
 class User(AbstractUser):

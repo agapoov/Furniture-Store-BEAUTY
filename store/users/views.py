@@ -1,19 +1,22 @@
-from carts.models import Cart
-from common.mixins import CacheMixin
+import uuid
+from datetime import timedelta
+
 from django.contrib import auth, messages
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.views import LoginView
 from django.db.models import Prefetch
 from django.http import HttpResponseRedirect
-from django.shortcuts import redirect, get_object_or_404
+from django.shortcuts import get_object_or_404, redirect
 from django.urls import reverse, reverse_lazy
+from django.utils.timezone import now
 from django.views.generic import CreateView, TemplateView, UpdateView, View
+
+from carts.models import Cart
+from common.mixins import CacheMixin
 from orders.models import Order, OrderItem
 from users.forms import UserLoginForm, UserProfileForm, UserRegistrationForm
-from django.utils.timezone import now
-from datetime import timedelta
-import uuid
+
 from .models import EmailVerification
 
 
@@ -92,7 +95,7 @@ class EmailVerificationView(View):
             verification.verify_email()
             messages.success(request, 'Ваш email успешно подтвержден!')
         else:
-            messages.error(request, 'Ссылка для подтверждения почты истекла.')
+            messages.warning(request, 'Ссылка для подтверждения почты истекла.')
 
         return redirect('users:profile')
 
@@ -101,7 +104,7 @@ class EmailVerificationView(View):
         verification = EmailVerification.objects.filter(user=user).first()
 
         if verification and not verification.is_expired():
-            messages.error(request, 'Вы можете отправить новое письмо с подтверждением только через 24 часа.')
+            messages.warning(request, 'Вы можете отправить новое письмо с подтверждением только через 24 часа.')
         else:
             if verification:
                 verification.delete()  # удаляем старую запись, если она есть

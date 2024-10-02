@@ -1,5 +1,6 @@
-from carts.admin import CartTableAdmin
 from django.contrib import admin
+
+from carts.admin import CartTableAdmin
 from orders.admin import OrderTabularAdmin
 
 from .models import User

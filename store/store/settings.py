@@ -184,3 +184,25 @@ EMAIL_PORT = 465
 EMAIL_USE_SSL = True
 EMAIL_HOST_USER = 'Store114B@yandex.ru'
 EMAIL_HOST_PASSWORD = 'tokwmymgivtnplrx'
+
+# LOGGING
+
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'handlers': {
+        'console': {
+            'class': 'logging.StreamHandler',
+        },
+    },
+    'loggers': {
+        'django': {
+            'handlers': ['console'],
+            'level': 'INFO',
+        },
+        'users': {  # заменить на нужное приложение
+            'handlers': ['console'],
+            'level': 'INFO',
+        },
+    },
+}

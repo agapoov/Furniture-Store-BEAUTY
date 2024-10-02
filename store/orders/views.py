@@ -1,6 +1,5 @@
 import json
 
-from carts.models import Cart
 from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.db import transaction
@@ -12,11 +11,14 @@ from django.utils.decorators import method_decorator
 from django.views import View
 from django.views.decorators.csrf import csrf_exempt
 from django.views.generic import FormView
+from yookassa import Configuration, Payment
+
+from carts.models import Cart
 from orders.forms import CreateOrderForm
 from orders.models import Order, OrderItem
-from yookassa import Configuration, Payment
-from .tasks import send_order_status_email
 from store.settings import YOOKASSA_API_KEY, YOOKASSA_SHOP_ID
+
+from .tasks import send_order_status_email
 
 Configuration.account_id = YOOKASSA_SHOP_ID
 Configuration.secret_key = YOOKASSA_API_KEY
