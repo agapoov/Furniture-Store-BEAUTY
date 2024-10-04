@@ -1,3 +1,4 @@
+from django.shortcuts import render
 from django.views.generic import TemplateView
 
 
@@ -21,3 +22,7 @@ class AboutView(TemplateView):
         context['text_on_page'] = ('Текст о том, какой прекрасный этот магазин, и какой качественный товар тут '
                                    'продаётся.')
         return context
+
+
+def page_not_found(request, exception):
+    return render(request, '404.html', status=404)

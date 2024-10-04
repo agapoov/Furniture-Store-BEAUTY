@@ -49,6 +49,7 @@ INSTALLED_APPS = [
     'phonenumber_field',
     'yookassa',
 
+    'social_django',
 
     'main',
     'goods',
@@ -206,3 +207,15 @@ LOGGING = {
         },
     },
 }
+
+# Github allauth
+
+AUTHENTICATION_BACKENDS = (
+    'social_core.backends.github.GithubOAuth2',
+    'django.contrib.auth.backends.ModelBackend',
+)
+
+SOCIAL_AUTH_GITHUB_KEY = config('SOCIAL_AUTH_GITHUB_KEY')
+SOCIAL_AUTH_GITHUB_SECRET = config('SOCIAL_AUTH_GITHUB_SECRET')
+
+LOGOUT_REDIRECT_URL = 'main:index'
