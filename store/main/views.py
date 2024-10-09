@@ -26,3 +26,23 @@ class AboutView(TemplateView):
 
 def page_not_found(request, exception):
     return render(request, '404.html', status=404)
+
+
+class DeliveryView(TemplateView):
+    template_name = 'main/about_delivery.html'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['title'] = 'HOME - Доставка и оплата'
+        context['content'] = 'Доставка и оплата'
+        return context
+
+
+class ContactView(TemplateView):
+    template_name = 'main/contact_info.html'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['title'] = 'HOME - Контактная информация'
+        context['content'] = 'Контактная информация'
+        return context

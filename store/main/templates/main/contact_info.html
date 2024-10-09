@@ -1,0 +1,25 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+    <div class="my-5 pt-5 px-2 pb-2 bg-white custom-shadow rounded">
+        <h2 class="m-2"><strong>{{ content }}</strong></h2>
+        <p class="m-2" style="font-size: 1.2rem;">
+            <p>Мы всегда рады помочь вам! Если у вас есть вопросы, предложения или вам нужна поддержка, не стесняйтесь обращаться к нам.</p>
+        <h2>Наши контакты</h2>
+        <ul>
+            <li><strong>Телефон:</strong> +7 (123) 456-78-90</li>
+            <li><strong>Электронная почта:</strong> <a href="mailto:support@example.com">support@example.com</a></li>
+            <li><strong>Адрес:</strong> Россия, ул. Вавилова 12, Майский, Белгородская область</li>
+        </ul>
+
+        <h2>Часы работы</h2>
+        <p>Наши офисные часы:</p>
+        <ul>
+            <li>Понедельник - Пятница: 9:00 - 18:00</li>
+            <li>Суббота: 10:00 - 15:00</li>
+            <li>Воскресенье: выходной</li>
+        </ul>
+        <p>Спасибо за ваш интерес к нашему магазину!</p>
+    </div>
+{% endblock %}
