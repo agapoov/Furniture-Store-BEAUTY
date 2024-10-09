@@ -1,7 +1,7 @@
 from django.urls import path
 from django.views.decorators.cache import cache_page
 
-from .views import AboutView, HomeView, DeliveryView, ContactView
+from .views import AboutView, ContactView, DeliveryView, HomeView
 
 app_name = 'main'
 

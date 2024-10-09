@@ -1,7 +1,9 @@
+from datetime import timedelta
+from unittest import mock
+
 from django.test import TestCase
 from django.utils import timezone
-from unittest import mock
-from datetime import timedelta
+
 from .models import EmailVerification, User
 
 
