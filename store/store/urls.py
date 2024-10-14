@@ -15,7 +15,6 @@ urlpatterns = [
     path('user/', include('users.urls', namespace='user')),
     path('cart/', include('carts.urls', namespace='cart')),
     path('orders/', include('orders.urls', namespace='orders')),
-    path('auth/', include('social_django.urls', namespace='social')),
 ]
 
 if DEBUG:
