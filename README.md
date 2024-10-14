@@ -54,7 +54,7 @@
    - Для Windows:
 
      ```bash
-     venv\Scriptsctivate
+     venv\Scripts\ctivate
      ```
 
    - Для MacOS/Linux:
