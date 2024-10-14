@@ -5,21 +5,35 @@ from django.test import TestCase
 from django.utils import timezone
 
 from .models import EmailVerification, User
+from django.urls import reverse
+from http import HTTPStatus
 
 
-class UserModelTest(TestCase):
+class UserRegistrationTests(TestCase):
+
     def setUp(self):
-        self.user = User.objects.create_user(
-            username='test',
-            first_name='first_name',
-            last_name='last_name',
-            email='example@example.com',
-            password='password123',
-        )
+        # Создание тестового пользователя
+        self.data = {
+            'first_name': 'Vitaliy',
+            'last_name': 'Nalivkin',
+            'username': 'SimpleUser',
+            'email': 'exampleemail@gmail.com',
+            'password1': 'UserPassword0987',
+            'password2': 'UserPassword0987'
+        }
+        self.path = reverse('users:registration')
 
-    def test_user_creation(self):
-        self.assertEqual(self.user.username, 'test')
-        self.assertTrue(self.user.check_password('password123'))
+    def test_user_registration_get(self):
+        """Тест корректного отображение страницы"""
+        response = self.client.get(self.path)
+        self.assertEqual(response.status_code, HTTPStatus.OK)
+        self.assertTemplateUsed(response, 'users/registration.html')
+
+    def test_user_registration_post_success(self):
+        """Тест успешного создания пользователя"""
+        username = self.data['username']
+        self.assertFalse(User.objects.filter(username=username).exists())
+        response = self.client.post(self.path, self.data)
 
 
 class EmailVerificationTest(TestCase):
