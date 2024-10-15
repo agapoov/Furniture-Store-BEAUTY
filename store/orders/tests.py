@@ -8,8 +8,9 @@ from goods.models import Categories, Products
 from orders.models import Order, OrderItem
 from users.models import User
 
-from unittest.mock import patch
-from yookassa import Payment
+from .tasks import send_order_status_email
+from django.core.mail import send_mail
+from unittest.mock import patch, Mock
 
 
 class CreateOrderViewTests(TestCase):
@@ -68,3 +69,26 @@ class CreateOrderViewTests(TestCase):
         self.assertRedirects(response, self.url)
         messages = list(response.wsgi_request._messages)
         self.assertEqual(str(messages[0]), "['Недостаточное кол-во товара Test Product на складе. В наличии: 10']")
+
+
+class SendOrderStatusEmailTests(TestCase):
+    def setUp(self):
+        self.user = User.objects.create_user(
+            username='testuser', email='testuser@example.com', password='UserPass1232'
+        )
+        self.order = Order.objects.create(
+            user=self.user, payment_id='12345', status='paid'
+        )
+
+    @patch('orders.tasks.send_mail')
+    def test_send_order_status_email(self, mock_send_mail):
+        """Testing that the task sends the email correctly"""
+        mock_send_mail.return_value = 1
+        result = send_order_status_email.apply(args=[self.order.payment_id])
+        self.assertEqual(result.status, 'SUCCESS')
+        mock_send_mail.assert_called_once_with(
+            'Статус вашего заказа',
+            f'Ваш заказ #{self.order.id} был обновлён. Новый статус: Оплачено.',
+            'Store114B@yandex.ru',
+            [self.user.email]
+        )
