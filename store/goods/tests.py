@@ -2,9 +2,9 @@ from http import HTTPStatus
 
 from django.test import TestCase
 from django.urls import reverse
-from .utils import q_search
 
 from .models import Categories, Products
+from .utils import q_search
 
 
 class CatalogViewTests(TestCase):

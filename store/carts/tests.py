@@ -1,11 +1,11 @@
 from http import HTTPStatus
 
 from django.test import TestCase
-
-from users.models import User
-from goods.models import Products, Categories
 from django.urls import reverse
+
 from carts.models import Cart
+from goods.models import Categories, Products
+from users.models import User
 
 
 class CartAddViewTests(TestCase):

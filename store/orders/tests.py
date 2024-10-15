@@ -1,5 +1,7 @@
 from http import HTTPStatus
+from unittest.mock import Mock, patch
 
+from django.core.mail import send_mail
 from django.test import TestCase
 from django.urls import reverse
 
@@ -9,8 +11,6 @@ from orders.models import Order, OrderItem
 from users.models import User
 
 from .tasks import send_order_status_email
-from django.core.mail import send_mail
-from unittest.mock import patch, Mock
 
 
 class CreateOrderViewTests(TestCase):
