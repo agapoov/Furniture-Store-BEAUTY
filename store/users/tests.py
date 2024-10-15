@@ -13,8 +13,8 @@ class UserRegistrationTests(TestCase):
 
     def setUp(self):
         self.data = {
-            'first_name': 'Vitaliy',
-            'last_name': 'Nalivkin',
+            'first_name': 'John',
+            'last_name': 'Doe',
             'username': 'SimpleUser',
             'email': 'exampleemail@gmail.com',
             'password1': 'UserPassword0987',
@@ -33,6 +33,52 @@ class UserRegistrationTests(TestCase):
         username = self.data['username']
         self.assertFalse(User.objects.filter(username=username).exists())
         response = self.client.post(self.path, self.data)
+
+    def test_user_registration_password_mismatch(self):
+        """Testing the password mismatch error"""
+        self.data['password2'] = 'Different_Password12'
+        response = self.client.post(self.path, self.data)
+        self.assertEqual(response.status_code, HTTPStatus.OK)
+        self.assertFormError(response, 'form', 'password2', 'Введенные пароли не совпадают.')
+
+    def test_user_registration_post_missing_field(self):
+        """Testing the missing field error"""
+        self.data['email'] = ''
+        response = self.client.post(self.path, self.data)
+        self.assertEqual(response.status_code, HTTPStatus.OK)
+        self.assertFormError(response, 'form', 'email', ['Обязательное поле.'])
+
+    def test_invalid_form_error(self):
+        """Testing the invalid form"""
+        self.data['email'] = 'invalid@.com'
+        response = self.client.post(self.path, self.data)
+        self.assertEqual(response.status_code, HTTPStatus.OK)
+        self.assertFormError(response, 'form', 'email', ['Введите правильный адрес электронной почты.'])
+
+    def test_username_already_registered_error(self):
+        """Testing the username already exists"""
+        User.objects.create_user(
+            username='SimpleUser',
+            email='the_second_email@mai.ru',
+            password='UserPassword0987'
+        )
+
+        response = self.client.post(self.path, self.data)
+
+        self.assertEqual(response.status_code, HTTPStatus.OK)
+        self.assertFormError(response, 'form', 'username', ['Пользователь с таким именем уже существует.'])
+
+    def test_email_already_registered_error(self):
+        """Testing the user with this email already exists"""
+        User.objects.create_user(
+            username='SecondSimpleUser',
+            email='exampleemail@gmail.com',
+            password='UserPassword0987'
+        )
+
+        response = self.client.post(self.path, self.data)
+        self.assertEqual(response.status_code, HTTPStatus.OK)
+        self.assertFormError(response, 'form', 'email', ['Пользователь с таким Email уже существует.'])
 
 
 class EmailVerificationTests(TestCase):
@@ -70,7 +116,7 @@ class EmailVerificationTests(TestCase):
         self.assertTrue(self.email_verification.is_expired())
 
     def test_is_expired_with_custom_duration(self):
-        """A test to test the is_expired method with a custom duration"""
+        """Testing the is_expired method with a custom duration"""
         duration = timedelta(hours=1)
         self.assertFalse(self.email_verification.is_expired(duration=duration))
 
