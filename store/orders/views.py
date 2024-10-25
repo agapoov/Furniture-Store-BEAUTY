@@ -18,7 +18,7 @@ from orders.forms import CreateOrderForm
 from orders.models import Order, OrderItem
 from store.settings import YOOKASSA_API_KEY, YOOKASSA_SHOP_ID
 
-from .tasks import send_order_status_email
+from .tasks import send_order_status_email_task
 
 Configuration.account_id = YOOKASSA_SHOP_ID
 Configuration.secret_key = YOOKASSA_API_KEY
@@ -129,12 +129,15 @@ class YandexPaymentWebhookView(View):
                 order.is_paid = True
                 order.status = 'paid'
                 order.save()
-                # отправка письма о статусе заказа
-                send_order_status_email(order)
 
-                return JsonResponse({'status': 'success'}, status=200)
+                # Sent order new status
+                send_order_status_email_task.delay(order.id)
+
+                return JsonResponse({'status': 'success', 'message': 'Order payment succeeded.'}, status=200)
             except Order.DoesNotExist:
                 return JsonResponse({'status': 'order not found'}, status=404)
+            except Exception:
+                return JsonResponse({'status': 'error', 'message': 'Failed to send email.'}, status=500)
 
         elif status == 'payment.canceled':
             try:
@@ -142,10 +145,13 @@ class YandexPaymentWebhookView(View):
                 order.status = 'canceled'
                 order.save()
 
-                send_order_status_email(order)
+                # Sent order new status
+                send_order_status_email_task.delay(order.id)
 
-                return JsonResponse({'status': 'order canceled'}, status=200)
+                return JsonResponse({'status': 'order canceled', 'message': 'Payment was canceled.'}, status=200)
             except Order.DoesNotExist:
                 return JsonResponse({'status': 'order not found'}, status=404)
+            except Exception:
+                return JsonResponse({'status': 'error', 'message': 'Failed to send email.'}, status=500)
 
-        return JsonResponse({'status': 'ignored'}, status=200)
+        return JsonResponse({'status': 'ignored', 'message': 'Event not processed.'}, status=200)

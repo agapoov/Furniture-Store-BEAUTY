@@ -14,7 +14,6 @@ import os
 from pathlib import Path
 
 from decouple import config
-
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -34,7 +33,7 @@ ALLOWED_HOSTS = [
     '127.0.0.1',
     # '78a0-31-162-135-209.ngrok-free.app', ngrok
 ]
-DOMAIN_NAME = 'http://127.0.0.1:8000'
+DOMAIN_NAME = "http://localhost:8000"
 
 # Application definition
 
@@ -173,20 +172,14 @@ INTERNAL_IPS = [
 
 YOOKASSA_SHOP_ID = config('YOOKASSA_SHOP_ID')
 YOOKASSA_API_KEY = config('YOOKASSA_API_KEY')
-# email confirmation
 
-CELERY_BROKER_URL = 'redis://localhost:6379/0'
-CELERY_ACCEPT_CONTENT = ['json']
-CELERY_TASK_SERIALIZER = 'json'
-
-# EMAIL_BACKEND = config('EMAIL_BACKEND')
+# EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend" # Uncomment if you want logging for console
+EMAIL_BACKEND = config('EMAIL_BACKEND')
 EMAIL_HOST = config('EMAIL_HOST')
 EMAIL_PORT = config('EMAIL_PORT', cast=int)
 EMAIL_USE_SSL = config('EMAIL_USE_SSL', cast=bool)
 EMAIL_HOST_USER = config('EMAIL_HOST_USER')
 EMAIL_HOST_PASSWORD = config('EMAIL_HOST_PASSWORD')
-
-EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
 
 # LOGGING
 
@@ -220,3 +213,8 @@ AUTHENTICATION_BACKENDS = (
 # SOCIAL_AUTH_GITHUB_SECRET = config('SOCIAL_AUTH_GITHUB_SECRET')
 
 LOGOUT_REDIRECT_URL = 'main:index'
+
+# Celery options
+CELERY_BROKER_URL = 'redis://127.0.0.1:6379'
+CELERY_RESULT_BACKEND = 'redis://localhost:6379/0'
+

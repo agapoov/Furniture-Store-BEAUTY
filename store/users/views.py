@@ -58,27 +58,18 @@ class UserRegistrationView(CreateView):
     success_url = reverse_lazy('users:profile')
 
     def form_valid(self, form):
+        user = form.save()  # Now sending verification mail here
+
+        auth.login(self.request, user)
+
+        # Updating cart
         session_key = self.request.session.session_key
-        user = form.instance
-
-        if user:
-            form.save()
-            auth.login(self.request, user)
-
-            # Создание записи подтверждения почты
-            expiration_time = now() + timedelta(hours=24)
-            email_verification = EmailVerification.objects.create(
-                user=user,
-                code=uuid.uuid4(),
-                expiration=expiration_time
-            )
-            email_verification.send_verification_email()
-
         if session_key:
             Cart.objects.filter(session_key=session_key).update(user=user)
 
-        messages.success(self.request, f'{user.first_name}, вы успешно зарегистрировались.'
-                                       f' Пожалуйста, подтвердите свою почту.')
+        messages.success(self.request, f'{user.first_name}, вы успешно зарегистрировались. '
+                                       'Пожалуйста, подтвердите свою почту.')
+
         return HttpResponseRedirect(self.success_url)
 
     def get_context_data(self, **kwargs):

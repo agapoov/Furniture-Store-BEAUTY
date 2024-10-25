@@ -50,12 +50,12 @@ class EmailVerification(models.Model):
         )
 
     def is_expired(self, duration=None):
-        """Проверка истечения срока действия ссылки или времени для отправки нового письма"""
+        """Checking the expiration date of a link or time to send a new email"""
         if duration:
             return timezone.now() >= self.created + duration
         return timezone.now() >= self.expiration
 
     def verify_email(self):
-        """Подтверждение электронной почты у пользователя"""
+        """User email confirmation"""
         self.user.email_is_verified = True
         self.user.save()

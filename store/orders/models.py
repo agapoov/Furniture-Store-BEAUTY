@@ -1,9 +1,9 @@
 from django.db import models
 from phonenumber_field.modelfields import PhoneNumberField
-
+from django.contrib.auth.models import send_mail
 from goods.models import Products
 from users.models import User
-
+from store import settings
 
 class OrderItemQuerySet(models.QuerySet):
 
@@ -39,6 +39,19 @@ class Order(models.Model):
         db_table = 'order'
         verbose_name = 'Заказ'
         verbose_name_plural = 'Заказы'
+
+    def send_order_status_email(self):
+        subject = 'Статус вашего заказа'
+        message = f'Ваш заказ #{self.id} был обновлён. Новый статус: {self.get_status_display()}.'
+        recipient_list = [self.user.email]
+
+        send_mail(
+            subject=subject,
+            message=message,
+            from_email=settings.EMAIL_HOST_USER,
+            recipient_list=recipient_list,
+            fail_silently=False,
+        )
 
     def get_status_display(self):
         return dict(self.STATUS_CHOICES).get(self.status, self.status)

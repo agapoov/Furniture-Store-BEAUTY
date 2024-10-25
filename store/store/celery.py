@@ -4,9 +4,9 @@ import os
 
 from celery import Celery
 
-os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'your_project_name.settings')
+os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'store.settings')
 
-app = Celery('your_project_name')
+app = Celery('store')
 
 app.config_from_object('django.conf:settings', namespace='CELERY')
 
