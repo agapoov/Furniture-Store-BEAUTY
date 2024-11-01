@@ -57,7 +57,7 @@
     {% endif %}
 </div>
 {% if carts and not order %}
-    <a class="btn btn-dark" href="{% url 'orders:create-order' %}">
-        Оформить заказ
+    <a class="btn btn-success" href="{% url 'orders:create-order' %}">
+        Оформить заказ <i class="bi bi-basket-fill"></i>
     </a>
 {% endif %}
