@@ -10,7 +10,7 @@ from goods.models import Categories, Products
 from orders.models import Order, OrderItem
 from users.models import User
 
-from .tasks import send_order_status_email
+from .tasks import send_order_status_email_task
 
 
 class CreateOrderViewTests(TestCase):
@@ -80,15 +80,9 @@ class SendOrderStatusEmailTests(TestCase):
             user=self.user, payment_id='12345', status='paid'
         )
 
-    @patch('orders.tasks.send_mail')
-    def test_send_order_status_email(self, mock_send_mail):
+    @patch('orders.models.Order.send_order_status_email')
+    def test_send_order_status_email_task(self, mock_send_order_status_email):
         """Testing that the task sends the email correctly"""
-        mock_send_mail.return_value = 1
-        result = send_order_status_email.apply(args=[self.order.payment_id])
+        result = send_order_status_email_task.apply(args=[self.order.id])
         self.assertEqual(result.status, 'SUCCESS')
-        mock_send_mail.assert_called_once_with(
-            'Статус вашего заказа',
-            f'Ваш заказ #{self.order.id} был обновлён. Новый статус: Оплачено.',
-            'Store114B@yandex.ru',
-            [self.user.email]
-        )
+        mock_send_order_status_email.assert_called_once()
