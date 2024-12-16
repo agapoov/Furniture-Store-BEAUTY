@@ -79,7 +79,8 @@ class UserRegistrationView(CreateView):
 
 
 class EmailVerificationView(View):
-    def get(self, request, email, code):
+    @staticmethod
+    def get(request, email, code):
         verification = get_object_or_404(EmailVerification, user__email=email, code=code)
 
         if not verification.is_expired():
@@ -90,7 +91,8 @@ class EmailVerificationView(View):
 
         return redirect('users:profile')
 
-    def post(self, request):
+    @staticmethod
+    def post(request):
         user = request.user
         verification = EmailVerification.objects.filter(user=user).first()
 

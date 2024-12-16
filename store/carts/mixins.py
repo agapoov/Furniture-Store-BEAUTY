@@ -20,7 +20,8 @@ class CartMixin:
 
         return Cart.objects.filter(**query_kwargs).first()
 
-    def render_cart(self, request):
+    @staticmethod
+    def render_cart(request):
         user_cart = get_user_carts(request)
         context = {'carts': user_cart}
         referer = request.META.get('HTTP_REFERER')
